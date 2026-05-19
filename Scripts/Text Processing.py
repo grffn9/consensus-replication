@@ -142,7 +142,7 @@ def analyze_sentiment(text):
 
 
 def main():
-    input_filename = "C:/Users/griff/OneDrive/Desktop/Misinformation Project/Consensus/Datasets/articles.csv"
+    input_filename = "Datasets/articles.csv"
     try:
         df = pd.read_csv(input_filename)
     except Exception as e:
@@ -190,7 +190,7 @@ def main():
     df = df[~df["cleaned_text"].str.startswith("failed to extract")]
 
     # Save the processed DataFrame.
-    output_filename = "C:/Users/griff/OneDrive/Desktop/Misinformation Project/Consensus/Datasets/text_processed_results.csv"
+    output_filename = "Datasets/text_processed_results.csv"
     try:
         df.to_csv(output_filename, index=False)
         print(f"Processed articles saved to {output_filename}")

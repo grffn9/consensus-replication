@@ -19,7 +19,7 @@ import aiohttp
 import feedparser
 import pandas as pd
 from bs4 import BeautifulSoup
-from newspaper import Article
+from newspaper import Article, Config
 from functools import partial
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
@@ -418,8 +418,13 @@ async def async_scrape_article(url, executor):
     """
     loop = asyncio.get_event_loop()
     try:
-        result = await loop.run_in_executor(executor, partial(scrape_article, url))
+        result = await asyncio.wait_for(
+            loop.run_in_executor(executor, partial(scrape_article, url)),
+            timeout=25.0
+        )
         return result
+    except asyncio.TimeoutError:
+        return "Failed to extract: Timeout via asyncio"
     except Exception as e:
         return f"Failed to extract: {e}"
 
@@ -429,7 +434,9 @@ def scrape_article(url):
     Synchronously scrape an article using newspaper3k.
     """
     try:
-        article = Article(url)
+        config = Config()
+        config.request_timeout = 15
+        article = Article(url, config=config)
         article.download()
         article.parse()
         return article.text if article.text else "No relevant content found"
@@ -439,7 +446,7 @@ def scrape_article(url):
 
 async def main_async():
     # Load or initialize the combined dataset.
-    output_csv = "C:/Users/griff/OneDrive/Desktop/Misinformation Project/Consensus/Datasets/articles.csv"
+    output_csv = "Datasets/articles.csv"
     if os.path.exists(output_csv):
         df_existing = pd.read_csv(output_csv)
         print(f"Loaded existing dataset with {len(df_existing)} entries.")

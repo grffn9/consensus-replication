@@ -28,7 +28,7 @@ nltk.download("punkt")
 
 ### 1. Full Article Topic Modeling
 
-def load_articles(csv_file="C:/Users/griff/OneDrive/Desktop/Misinformation Project/Consensus/Datasets/text_processed_results.csv"):
+def load_articles(csv_file="Datasets/text_processed_results.csv"):
     """
     Load the scraped articles from CSV.
     Only articles with non-empty scraped_text are considered.
@@ -186,7 +186,7 @@ def hierarchical_topic_modeling(df, global_topic_model):
 
 def main():
     # (A) Load articles
-    df = load_articles("C:/Users/griff/OneDrive/Desktop/Misinformation Project/Consensus/Datasets/text_processed_results.csv")
+    df = load_articles("Datasets/text_processed_results.csv")
     print(f"Loaded {len(df)} articles for topic modeling.")
 
     # (B) Run BERTopic on full article texts
@@ -217,7 +217,7 @@ def main():
     df = hierarchical_topic_modeling(df, global_topic_model)
 
     # (F) Save the results
-    output_file = "C:/Users/griff/OneDrive/Desktop/Misinformation Project/Consensus/Datasets/topic_modeling_results.csv"
+    output_file = "Datasets/topic_modeling_results.csv"
     df.sort_values(by="source", inplace=True)  # sort by source to group similar publishers
     df.to_csv(output_file, index=False, encoding="utf-8")
     print(f"\nHierarchical topic modeling complete. Results saved to '{output_file}'.")

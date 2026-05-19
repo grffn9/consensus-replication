@@ -167,9 +167,14 @@ def consensus_summary(df, all_embeddings, model, summarizer):
         weighted_cluster_size = cluster_df['source_weight'].sum()
         sentiments = cluster_df['sentiment_score'].values
         weights = cluster_df['source_weight'].values
-        weighted_avg = np.average(sentiments, weights=weights)
-        weighted_var = np.average((sentiments - weighted_avg) ** 2, weights=weights)
-        weighted_std = np.sqrt(weighted_var)
+        
+        if len(cluster_df) > 1 and weights.sum() > 0:
+            weighted_avg = np.average(sentiments, weights=weights)
+            weighted_var = np.average((sentiments - weighted_avg) ** 2, weights=weights)
+            weighted_std = np.sqrt(weighted_var)
+        else:
+            weighted_avg = sentiments[0] if len(sentiments) > 0 else 0.0
+            weighted_std = 0.0
 
         top_keywords = get_top_keywords(cluster_df['cleaned_text'].tolist(), n=5)
         common_entities = aggregate_named_entities(cluster_df['named_entities'].tolist())
@@ -204,7 +209,7 @@ def consensus_summary(df, all_embeddings, model, summarizer):
 # --- Main Pipeline ---
 
 def main():
-    input_csv = "C:/Users/griff/OneDrive/Desktop/Misinformation Project/Consensus/Datasets/text_processed_results.csv"
+    input_csv = "Datasets/text_processed_results.csv"
     df = load_processed_data(input_csv)
 
     # Work only with articles that have non-empty cleaned_text.
@@ -228,7 +233,7 @@ def main():
     consensus_df.sort_values(by="consensus_metric", ascending=False, inplace=True)
 
     # Save the consensus summary.
-    output_csv = "C:/Users/griff/OneDrive/Desktop/Misinformation Project/Consensus/Datasets/consensus_summary.csv"
+    output_csv = "Datasets/consensus_summary.csv"
     consensus_df.to_csv(output_csv, index=False)
     print(f"Consensus summary saved to {output_csv}")
 
